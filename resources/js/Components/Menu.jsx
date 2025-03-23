@@ -55,9 +55,10 @@ export default function Menu({ user }) {
                                 </NavLink>
 
                                 <NavLink
-                                   
+                                   href={route('vacants.search')}
+                                   active={route().current('vacants.search')}
                                 >
-                                    Buscar vacantes
+                                    Ver vacantes
                                 </NavLink>
                             </>
                         )

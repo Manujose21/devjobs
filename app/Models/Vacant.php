@@ -16,7 +16,8 @@ class Vacant extends Model
         "image",
         "category_id",
         "salary_id",
-        "user_id"
+        "user_id",
+        "visible"
     ];
 
 
@@ -26,5 +27,13 @@ class Vacant extends Model
 
     public function salary(){
         return $this->belongsTo(Salary::class);
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+
+    public function applications(){
+        return $this->hasMany(UserVacant::class);
     }
 }

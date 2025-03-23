@@ -1,11 +1,11 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import PrimaryButton from '@/Components/PrimaryButton';
 import InputError from '@/Components/InputError';
-import { useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useForm, Head , usePage } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
 export default function CreateVacants({ salaries, categories }) {
 
     const { data, setData, post, errors, reset, wasSuccessful} = useForm({
@@ -19,6 +19,19 @@ export default function CreateVacants({ salaries, categories }) {
     });
 
     const [ preview, setPreview ] = useState(null)
+
+    const { flash } = usePage().props;
+
+    useEffect(() => {
+        if(flash.success){
+            Swal.fire({
+                icon: 'success',
+                title: 'Creado correctamente',
+                text: flash.success,
+                timer: 2500,
+            })
+        }
+    }, [flash]);
 
     const submit = (e) => {
         e.preventDefault();

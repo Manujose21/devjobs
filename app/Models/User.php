@@ -48,4 +48,12 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
+    public function vacancies(){
+        return $this->hasMany(Vacant::class);
+    }
+
+    public function applications(){
+        return $this->hasMany(UserVacant::class);
+    }
 }
