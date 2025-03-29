@@ -1,8 +1,9 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import PrimaryButton from "@/Components/PrimaryButton";
-import { Head, Link} from "@inertiajs/react";
+import { Head, Link, usePage } from "@inertiajs/react";
+import { useEffect } from "react";
 export default function SearchedVacants({vacants}) {
-    console.log("vacants" , vacants);
+    // console.log("vacants" , vacants);
     return (
         <AuthenticatedLayout
             header={

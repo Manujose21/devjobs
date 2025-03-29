@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VacantController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -15,10 +16,9 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', [VacantController::class, 'index'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    
+Route::middleware('auth', 'verified')->group(function () {
+    Route::get('/dashboard', [VacantController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -33,6 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/vacants/{vacant}', [VacantController::class, 'destroy'])->name('vacants.destroy');
     Route::put('/vacants/{vacant}', [VacantController::class, 'update'])->name('vacants.update');
 
+    // notifications
+    Route::get('/notifications', NotificationController::class)->name('notifications');
     // postulates
     Route::get('/vacants/postulates', [VacantController::class, 'index'])->name('vacants.postulates');
 

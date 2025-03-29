@@ -7,7 +7,7 @@ export default function PostulateVacant({vacant}) {
         "cv": null,
     });
 
-
+    console.log(vacant);
     const submit = (e) => {
         e.preventDefault();
         console.log(data);

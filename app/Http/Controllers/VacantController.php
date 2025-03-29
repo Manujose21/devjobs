@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use App\Models\UserVacant;
+use App\Notifications\Postulate;
 
 class VacantController extends Controller
 {
@@ -20,13 +21,28 @@ class VacantController extends Controller
 
     public function index()
     {
-        $vacants = Vacant::where('user_id', auth()->user()->id)
+
+        if(auth()->user()->rol == 2){
+        
+            $vacants = Vacant::where('user_id', auth()->user()->id)
+                ->join('categories', 'vacants.category_id', '=', 'categories.id')
+                ->join('salaries', 'vacants.salary_id', '=', 'salaries.id')
+                ->select('vacants.*', 'categories.category as category_name', 'salaries.salary as salary_pay')
+                ->get();
+    
+            return Inertia::render('Dashboard', compact('vacants'));
+        }
+
+        $postulates = UserVacant::where('user_vacants.user_id', auth()->user()->id)
+            ->join('vacants', 'user_vacants.vacant_id', '=', 'vacants.id')
             ->join('categories', 'vacants.category_id', '=', 'categories.id')
             ->join('salaries', 'vacants.salary_id', '=', 'salaries.id')
             ->select('vacants.*', 'categories.category as category_name', 'salaries.salary as salary_pay')
             ->get();
 
-        return Inertia::render('Dashboard', compact('vacants'));
+        return Inertia::render('Candidates/Postulates', [
+            "postulates" => $postulates
+        ]);
     }
 
     public function create(){
@@ -36,7 +52,7 @@ class VacantController extends Controller
         $salaries = Salary::all();
         $categories = Category::all();
         
-        return Inertia::render('Vacants/CreateVacants', [
+        return Inertia::render('Recrutier/CreateVacants', [
             'salaries' => $salaries,
             'categories' => $categories
         ]);
@@ -87,7 +103,7 @@ class VacantController extends Controller
         $categories = Category::all();
         $salaries = Salary::all();
 
-        return Inertia::render('Vacants/ShowVacant', [
+        return Inertia::render('Recrutier/ShowVacant', [
             'vacant' => $vacant,
             'categories' => $categories,
             'salaries' => $salaries
@@ -119,29 +135,30 @@ class VacantController extends Controller
 
     public function search()
     {
-        Gate::authorize("viewCandidates", Vacant::class);
+        Gate::authorize('viewCandidates', Vacant::class);
 
-        $vacants = Vacant::where("visible", 1)
-            ->where("status", "open")
-            ->join('categories', 'vacants.category_id', '=', 'categories.id')
-            ->join('salaries', 'vacants.salary_id', '=', 'salaries.id')
-            ->select('vacants.*', 'categories.category as category_name', 'salaries.salary as salary_pay')
-            ->get();
-
-        return Inertia::render('Vacants/SearchedVacants', [
-            "vacants" => $vacants
+       $visibleVacants = Vacant::where('visible', 1)
+           ->where('status', 'open')
+           ->whereNotIn('vacants.id', UserVacant::where('user_id', auth()->user()->id)->pluck('vacant_id'))
+           ->select('vacants.*', 'categories.category as category_name', 'salaries.salary as salary_pay')
+           ->join('categories', 'vacants.category_id', '=', 'categories.id')
+           ->join('salaries', 'vacants.salary_id', '=', 'salaries.id')
+           ->get();
+        
+        return Inertia::render('Candidates/SearchedVacants', [
+            'vacants' => $visibleVacants
         ]);
-
     }
 
     public function postulateShow(Vacant $vacant) 
     {
-        $vacant = $vacant->join('categories', 'vacants.category_id', '=', 'categories.id')
+        $vacant = $vacant->where('vacants.id', $vacant->id)
+            ->join('categories', 'vacants.category_id', '=', 'categories.id')
             ->join('salaries', 'vacants.salary_id', '=', 'salaries.id')
             ->select('vacants.*', 'categories.category as category_name', 'salaries.salary as salary_pay')
             ->first();
 
-        return Inertia::render('Vacants/PostulateVacant', [
+        return Inertia::render('Candidates/PostulateVacant', [
             "vacant" => $vacant
         ]);
     }
@@ -165,15 +182,19 @@ class VacantController extends Controller
         UserVacant::create([
             "vacant_id" => $vacant->id,
             "user_id" => auth()->user()->id,
-            "cv" => $request->cv
+            "cv" => $cvName
         ]);
 
 
         $postulates = UserVacant::where("user_id", auth()->user()->id)->get();
 
-        return Inertia::render('Vacants/postulates', [
-            "postulates" => $postulates
-        ]);
+        $vacant->user->notify(new Postulate(
+            $vacant->id,
+            $vacant->title,
+            auth()->user()->id
+        ));
+
+       return redirect()->route("dashboard")->with("success", "La vacante ha sido postulada correctamente!");
 
     }
 
