@@ -8,7 +8,7 @@ import { useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
 const user = usePage().props.auth.user;
-
+const { notifications } = usePage().props;
 
 
 return (
@@ -17,7 +17,7 @@ return (
 			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 				<div className="flex h-16 justify-between">
 					
-					<Menu user={user} />
+					<Menu user={user} notifications={notifications}/>
 					
 				</div>
 			</div>

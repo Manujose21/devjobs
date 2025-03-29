@@ -5,7 +5,7 @@ import NavLink from '@/Components/NavLink';
 import { useState } from 'react';
 import  ResponsiveNavLink  from '@/Components/ResponsiveNavLink';
 
-export default function Menu({ user }) {
+export default function Menu({ user, notifications }) {
 
     const { rol, name } = user;
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
@@ -70,7 +70,16 @@ export default function Menu({ user }) {
                 <div className="relative ms-3">
                     <Dropdown>
                         <Dropdown.Trigger>
-                            <span className="inline-flex rounded-md">
+                            <span className="inline-flex rounded-md ">
+                                <Link href={route('notifications')}>
+                                    <button className='relative flex gap-1 items-center rounded-[999px] border bg-indigo-600 text-white px-4 py-2'>
+                                        { notifications.length }
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5" />
+                                        </svg>
+
+                                    </button>
+                                </Link>
                                 <button
                                     type="button"
                                     className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
