@@ -29,7 +29,12 @@ export default function CreateVacants({ salaries, categories }) {
                 title: 'Creado correctamente',
                 text: flash.success,
                 timer: 2500,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    reset();
+                }
             })
+
         }
     }, [flash]);
 

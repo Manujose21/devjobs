@@ -24,13 +24,17 @@ class VacantController extends Controller
 
         if(auth()->user()->rol == 2){
         
-            $vacants = Vacant::where('user_id', auth()->user()->id)
+            $vacants = Vacant::where('vacants.user_id', auth()->user()->id)
                 ->join('categories', 'vacants.category_id', '=', 'categories.id')
                 ->join('salaries', 'vacants.salary_id', '=', 'salaries.id')
                 ->select('vacants.*', 'categories.category as category_name', 'salaries.salary as salary_pay')
                 ->get();
-    
-            return Inertia::render('Dashboard', compact('vacants'));
+            
+            
+                
+            return Inertia::render('Dashboard', [
+                "vacants" => $vacants
+            ]);
         }
 
         $postulates = UserVacant::where('user_vacants.user_id', auth()->user()->id)
@@ -99,6 +103,8 @@ class VacantController extends Controller
 
     public function show(Vacant $vacant)
     {
+
+        Gate::authorize('viewAny', $vacant);
 
         $categories = Category::all();
         $salaries = Salary::all();
@@ -177,7 +183,7 @@ class VacantController extends Controller
         // save cv in to public path
         $cv = $request->file("cv");
         $cvName = Str::uuid().'.'.$cv->extension();
-        $cv->move(public_path('Cvs'), $cvName);
+        $cv->storeAs('CVs', $cvName);
 
         UserVacant::create([
             "vacant_id" => $vacant->id,

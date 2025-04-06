@@ -22,6 +22,8 @@ export default function Dashboard({ vacants }) {
         })
     }
 
+    console.log(vacants);
+
     return (
         <AuthenticatedLayout
             header={
@@ -49,10 +51,18 @@ export default function Dashboard({ vacants }) {
                                         <p className='text-gray-600 text-sm'>Esta visible: {vacant.visible ? "Si" : "No"}</p>
                                     </div>
                                     <div className='flex flex-col gap-4 items-center'>
-                                        <div className="flex gap-3">
-                                            <PrimaryButton className='mr-2 bg'>
-                                                <Link href={route('vacants.show', vacant)} className='p-2  rounded'>Editar</Link>
-                                            </PrimaryButton>
+                                        <div className="flex flex-col sm:flex-row  gap-3 w-full ">
+                                            <Link className='w-full' href={route('candidates', vacant)}>
+                                                <button className='w-full inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out'>
+                                                    Candidatos
+                                                </button>
+                                            </Link>
+
+                                            <Link href={route('vacants.show', vacant)} className='w-full rounded'>
+                                                <PrimaryButton className='sm:mr-2 w-full'>
+                                                    Editar
+                                                </PrimaryButton>
+                                            </Link>
                                             
                                             <button onClick={() => showModalDelete(vacant.id)} className='text-red-600 px-4 py-2 rounded'>Eliminar</button>
                                             

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VacantController;
 use App\Http\Controllers\NotificationController;
@@ -7,14 +9,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [HomeController::class, 'index'])->name('welcome');
+Route::post('/filter', [HomeController::class, 'filterVacants'])->name('filter');
 
 
 Route::middleware('auth', 'verified')->group(function () {
@@ -34,9 +30,10 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::put('/vacants/{vacant}', [VacantController::class, 'update'])->name('vacants.update');
 
     // notifications
-    Route::get('/notifications', NotificationController::class)->name('notifications');
+    Route::get('/notifications', NotificationController::class)->middleware(\App\Http\Middleware\Recrutier::class)->name('notifications');
     // postulates
     Route::get('/vacants/postulates', [VacantController::class, 'index'])->name('vacants.postulates');
+    Route::get('/vacant/{vacant}/candidates', [CandidateController::class, 'index'])->name('candidates');
 
 });
 

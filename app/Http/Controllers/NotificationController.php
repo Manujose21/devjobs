@@ -15,6 +15,8 @@ class NotificationController extends Controller
         // clear notifications
         auth()->user()->unreadNotifications->markAsRead();
 
+        session(['notifications' => $notifications]);
+        
         return Inertia::render('Notification', [
             "notifications" => $notifications
         ]);

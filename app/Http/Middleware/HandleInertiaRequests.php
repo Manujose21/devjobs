@@ -29,6 +29,8 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -38,7 +40,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
             ],
-            'notifications' => $request->session()->get('notifications'), 
+            'notifications' =>      auth()->user()->unreadNotifications ?? [], 
         ];
     }
 }
